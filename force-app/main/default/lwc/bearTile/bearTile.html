@@ -1,5 +1,19 @@
 <template>
     <lightning-card title={bear.Name} class="bear-tile">
+        <!-- 
+            Edit button that fires the handleOpenRecordClick function. 
+            The button is placed on the lightning card using the actions slot. 
+            A slot is a placeholder for markup that a parent component passes into a component’s body.
+        -->
+        <div slot="actions">
+            <lightning-button-icon
+                icon-name="utility:search"
+                icon-class="bear-tile-button"
+                variant="bare"
+                alternative-text="Open record"
+                onclick={handleOpenRecordClick}>
+            </lightning-button-icon>
+        </div>
         <div class="slds-var-p-horizontal_small bear-tile-body">
             <div class="slds-media">
                 <div class="slds-media__figure">

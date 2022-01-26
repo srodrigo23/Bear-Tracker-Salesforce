@@ -15,7 +15,11 @@
 					<template for:each={bears.data} for:item="bear">
 						<lightning-layout-item key={bear.Id} size="3" class="slds-var-p-around_x-small">
 							<!-- Start bear tile -->
-							<c-bear-tile bear={bear}></c-bear-tile>
+                            <!-- 
+                                This allows us to capture the bearview event that is fired by the tile component. 
+                                The event is handled in a handleBearView function.
+                            -->
+							<c-bear-tile bear={bear} onbearview={handleBearView} ></c-bear-tile>
 							<!-- End bear tile -->
 						</lightning-layout-item>
 					</template>

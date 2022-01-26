@@ -1,17 +1,25 @@
+/* 
+We import a navigation mixin that bundles utility functions dealing with navigation. 
+A mixin lets us add functionality to a class without extending it. 
+This is useful when a class already extends a parent class (a class can only extend a single parent).
+*/
+import { NavigationMixin } from 'lightning/navigation';
+//This class extends the navigation mixin applied to the LightningElement base class.
 import { LightningElement, wire } from 'lwc';
-import ursusResources from '@salesforce/resourceUrl/ursus_park';
+//import ursusResources from '@salesforce/resourceUrl/ursus_park';
 /** BearController.getAllBears() Apex method */
 //import getAllBears from '@salesforce/apex/BearController.getAllBears';
 import searchBears from '@salesforce/apex/BearController.searchBears';
 
-export default class BearList extends LightningElement {
+// Our class extends the navigation mixin applied to the LightningElement base class.
+export default class BearList extends NavigationMixin(LightningElement) {
     searchTerm = ''; //reactive property
     @wire(searchBears, {searchTerm : '$searchTerm'})
     bears;
     //@wire(getAllBears) bears;
-    appResources = { // bear static image 
-		bearSilhouette: `${ursusResources}/img/standing-bear-silhouette.png`,
-	};
+    //appResources = { // bear static image 
+	//	bearSilhouette: `${ursusResources}/img/standing-bear-silhouette.png`,
+	//};
 
     handleSearchTermChange(event) {
 		// Debouncing this method: do not update the reactive property as
@@ -26,6 +34,25 @@ export default class BearList extends LightningElement {
 	}
 	get hasResults() {
 		return (this.bears.data.length > 0);
+	}
+
+    /*
+      We handle the bearview event in the handleBearView function. 
+      We extract the bear record id from the event detail and we use 
+      the navigation mixin to navigate to a bear record page.
+     */
+    handleBearView(event) {
+		// Get bear record id from bearview event
+		const bearId = event.detail;
+		// Navigate to bear record page
+		this[NavigationMixin.Navigate]({
+			type: 'standard__recordPage',
+			attributes: {
+				recordId: bearId,
+				objectApiName: 'Bear__c',
+				actionName: 'view',
+			},
+		});
 	}
     /*
 	//bears; //properties

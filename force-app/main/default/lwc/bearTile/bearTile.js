@@ -6,4 +6,15 @@ export default class BearTile extends LightningElement {
 	appResources = {
 		bearSilhouette: `${ursusResources}/img/standing-bear-silhouette.png`,
 	};
+
+    /*
+    The handleOpenRecordClick function is called when a user clicks 
+    on the open record button of a bear tile.
+    */
+    handleOpenRecordClick() {  
+        const selectEvent = new CustomEvent('bearview', {
+            detail: this.bear.Id
+        });
+        this.dispatchEvent(selectEvent);
+    }
 }
