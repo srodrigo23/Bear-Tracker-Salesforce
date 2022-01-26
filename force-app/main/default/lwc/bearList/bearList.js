@@ -1,3 +1,12 @@
+
+/*
+The first import brings utilities from the Lightning Messaging Service (LMS). 
+This service lets you publish messages across sibling components in a Lightning page over a Lightning message channel.
+The second import is Lightning message channel that was included in the base project that you retrieved from GitHub.
+*/
+import { publish, MessageContext } from 'lightning/messageService';
+import BEAR_LIST_UPDATE_MESSAGE from '@salesforce/messageChannel/BearListUpdate__c';
+
 /* 
 We import a navigation mixin that bundles utility functions dealing with navigation. 
 A mixin lets us add functionality to a class without extending it. 
@@ -14,8 +23,32 @@ import searchBears from '@salesforce/apex/BearController.searchBears';
 // Our class extends the navigation mixin applied to the LightningElement base class.
 export default class BearList extends NavigationMixin(LightningElement) {
     searchTerm = ''; //reactive property
-    @wire(searchBears, {searchTerm : '$searchTerm'})
+    
+    //This lines might be replaced 
+    //@wire(searchBears, {searchTerm : '$searchTerm'})
+    //bears;
+
     bears;
+    // We retrieve the Lightning message context and store it in a messageContext property.
+    @wire(MessageContext) messageContext;
+    //We use a wired function to capture incoming bear list data and fire a 
+    //custom BearListUpdate__c Ligthning message with the list of bear records.
+    @wire(searchBears, {searchTerm: '$searchTerm'})
+    //We pass searchTerm as a dynamic parameter to our wired searchBears adapter so that each time searchTerm changes, 
+    //loadBears is re-executed and we fire a new message with the new search results.
+    loadBears(result) {
+        this.bears = result;
+        if (result.data) {
+            const message = {
+                bears: result.data
+            };
+            //We use the publish function that we imported from LMS to fire a 
+            //BearListUpdate__c Ligthning message with the bear list.
+            publish(this.messageContext, BEAR_LIST_UPDATE_MESSAGE, message);
+        }
+    }
+
+
     //@wire(getAllBears) bears;
     //appResources = { // bear static image 
 	//	bearSilhouette: `${ursusResources}/img/standing-bear-silhouette.png`,
